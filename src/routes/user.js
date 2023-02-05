@@ -1,7 +1,7 @@
 import express from 'express'
-import User from '../models/User'
+import User from '../models/User.js'
 
-import { verifyToken, tokenUser } from '../authentication/verifyToken'
+import { verifyToken, tokenUser } from '../authentication/verifyToken.js'
 
 const router = express.Router()
 

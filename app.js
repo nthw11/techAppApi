@@ -1,6 +1,6 @@
 import express from 'express'
 import {} from 'dotenv/config'
-import connectDB from './config/db.js'
+import connectDB from './src/config/db.js'
 
 import testRoutes from './src/routes/test.js'
 import userRoutes from './src/routes/user.js'
@@ -10,7 +10,7 @@ const app = express()
 const PORT = process.env.PORT || 8000
 
 // Database connection
-// connectDB()
+connectDB()
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*')
