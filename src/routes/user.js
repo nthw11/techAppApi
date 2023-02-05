@@ -10,7 +10,7 @@ router
   // PUT edit user info
   .put('/:userId', verifyToken, async (req, res, next) => {
     const userId = req.params.userId
-    const { firstname, lastname, email, phone } = req.body
+    const { userFirstName, userLastName, userEmail, userPhone } = req.body
 
     const updatedUser = User.findById(
       { _id: userId },
@@ -18,17 +18,17 @@ router
         if (err) {
           res.status(400).send(err)
         } else {
-          if (firstname != '') {
-            response.firstname = firstname
+          if (userFirstName != '') {
+            response.userInfo.userFirstName = userFirstName
           }
-          if (lastname != '') {
-            response.lastname = lastname
+          if (userLastName != '') {
+            response.userInfo.userLastName = userLastName
           }
-          if (phone != '') {
-            response.phone = phone
+          if (userPhone != '') {
+            response.userInfo.userPhone = userPhone
           }
-          if (email != '') {
-            response.email = email
+          if (userEmail != '') {
+            response.userInfo.userEmail = userEmail
           }
           response.save((err, user) => {
             if (err) {
