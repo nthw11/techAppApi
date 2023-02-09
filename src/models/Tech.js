@@ -9,11 +9,11 @@ const TechSchema = new Schema({
     minLength: 4,
     maxLength: 24,
   },
+  techEmail: { type: String, required: true, unique: true },
   techInfo: {
     techFirstName: { type: String, required: true },
     techLastName: { type: String, required: true },
     techPhone: { type: String },
-    techEmail: { type: String, required: true, unique: true },
     techAddress: {
       streetAddress: { type: String },
       city: { type: String },

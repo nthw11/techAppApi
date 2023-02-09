@@ -6,6 +6,7 @@ import {
   validatePassword,
   issueJWT,
 } from '../authentication/auth.js'
+import { verifyToken } from '../authentication/verifyToken.js'
 
 const router = express.Router()
 
@@ -16,7 +17,7 @@ router
     if (error) return res.status(400).send(error.details[0].message)
     const { username, password } = req.body
 
-    await User.findOne({ username }).then(async (user) => {
+    await User.findOne({ userUsername: username }).then(async (user) => {
       if (!user) {
         res.status(401).send('could not find user')
       } else {
@@ -26,12 +27,11 @@ router
         } else {
           const userMinusPassword = {
             _id: user._id,
-            // tailor to model
-            username: user.username,
-            firstname: user.firstname,
-            lastname: user.lastname,
-            phone: user.phone,
-            email: user.email,
+            userUsername: user.userUsername,
+            userFirstName: user.userInfo.userFirstName,
+            userLastName: user.userInfo.userLastName,
+            userPhone: user.userInfo.userPhone,
+            userEmail: user.userEmail,
           }
           const token = issueJWT(user)
           res.json({ user: userMinusPassword, token: token }).status(200)
@@ -46,19 +46,20 @@ router
     const { error } = newUserValidation(req.body)
     if (error) return res.status(400).send(error.details[0].message)
 
-    const uniqueEmail = await User.findOne({ email: email })
-
-    if (uniqueEmail)
+    const dupEmailCheck = await User.findOne({ userEmail: email })
+    if (dupEmailCheck)
       return res.status(400).send('email already exists in database')
 
     const hashedPassword = await genPassword(password)
 
     const newUser = new User({
-      username,
-      firstname,
-      lastname,
-      email,
-      phone,
+      userUsername: username,
+      userEmail: email,
+      userInfo: {
+        userFirstName: firstname,
+        userLastName: lastname,
+        userPhone: phone,
+      },
       password: hashedPassword,
     })
     newUser.save((error, user) => {
@@ -67,11 +68,11 @@ router
       } else {
         const userMinusPassword = {
           _id: user._id,
-          username: user.username,
-          firstname: user.firstname,
-          lastname: user.lastname,
-          phone: user.phone,
-          email: user.email,
+          techUsername: user.userUsername,
+          userEmail: user.userEmail,
+          userFirstName: user.userInfo.userFirstName,
+          userLastName: user.userInfo.userLastName,
+          userPhone: user.userInfo.userPhone,
         }
         const token = issueJWT(user)
 

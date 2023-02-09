@@ -18,6 +18,7 @@ router
         if (err) {
           res.status(400).send(err)
         } else {
+          console.log(response)
           if (userFirstName != '') {
             response.userInfo.userFirstName = userFirstName
           }
@@ -28,7 +29,7 @@ router
             response.userInfo.userPhone = userPhone
           }
           if (userEmail != '') {
-            response.userInfo.userEmail = userEmail
+            response.userEmail = userEmail
           }
           response.save((err, user) => {
             if (err) {
@@ -40,6 +41,22 @@ router
         }
       }
     )
+  })
+
+  //DELETE user
+  .delete('/delete/:userId', verifyToken, async (req, res, next) => {
+    const userId = req.params.userId
+    User.findByIdAndDelete(userId).exec((err) => {
+      if (err) {
+        res.status(400).send(err)
+        return next(err)
+      } else {
+        res
+          .send('User has been successfully removed from the system')
+          .status(204)
+          .end()
+      }
+    })
   })
 
 export default router

@@ -16,7 +16,7 @@ router
     if (error) return res.status(400).send(error.details[0].message)
     const { username, password } = req.body
 
-    await Tech.findOne({ username }).then(async (tech) => {
+    await Tech.findOne({ techUsername: username }).then(async (tech) => {
       if (!tech) {
         res.status(401).send('could not find tech')
       } else {
@@ -27,9 +27,9 @@ router
           const techMinusPassword = {
             _id: tech._id,
             techUsername: tech.techUsername,
-            techFirstName: tech.techFirstName,
-            techLastName: tech.techLastName,
-            techPhone: tech.techPhone,
+            techFirstName: tech.techInfo.techFirstName,
+            techLastName: tech.techInfo.techLastName,
+            techPhone: tech.techInfo.techPhone,
             techEmail: tech.techEmail,
           }
           const token = issueJWT(tech)
@@ -54,10 +54,12 @@ router
 
     const newTech = new Tech({
       techUsername: username,
-      techFirstName: firstname,
-      techLastName: lastname,
       techEmail: email,
-      techPhone: phone,
+      techInfo: {
+        techFirstName: firstname,
+        techLastName: lastname,
+        techPhone: phone,
+      },
       password: hashedPassword,
     })
     newTech.save((error, tech) => {
@@ -69,8 +71,8 @@ router
           techUsername: tech.techUsername,
           techFirstName: tech.techInfo.techFirstName,
           techLastName: tech.techInfo.techLastName,
-          techPhone: tech.info.techPhone,
-          techEmail: tech.techInfo.techEmail,
+          techPhone: tech.techInfo.techPhone,
+          techEmail: tech.techEmail,
         }
         const token = issueJWT(tech)
 

@@ -18,7 +18,8 @@ const newUserValidation = (data) => {
     lastname: Joi.string().required(),
     phone: Joi.number(),
   })
-
+  console.log(`from loginValidation: ${data}`)
+  console.log(data)
   return schema.validate(data)
 }
 

@@ -9,11 +9,11 @@ const UserSchema = new Schema({
     minLength: 4,
     maxLength: 24,
   },
+  userEmail: { type: String, required: true, unique: true },
   userInfo: {
     userFirstName: { type: String, required: true },
     userLastName: { type: String, required: true },
     userPhone: { type: String },
-    userEmail: { type: String, required: true, unique: true },
     userAddress: {
       streetAddress: { type: String },
       city: { type: String },
