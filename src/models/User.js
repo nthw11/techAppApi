@@ -1,4 +1,5 @@
 import mongoose, { Schema as _Schema } from 'mongoose'
+
 const Schema = _Schema
 
 const UserSchema = new Schema({
@@ -26,7 +27,7 @@ const UserSchema = new Schema({
   password: { type: String, required: true, minLength: 6 },
   userCompanies: [{ type: Schema.Types.ObjectId, ref: 'Company' }],
   userProjects: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
-  userRating: { type: String },
+
   userReviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
   userEndorsements: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
   userPhotos: [{ type: String }],

@@ -25,6 +25,7 @@ const ProjectSchema = new Schema({
   projectBudget: { type: String },
   projectLodgingDetails: [{ type: String }],
   projectDressCode: { type: String },
+  projectStatus: { type: String },
 })
 
 export default mongoose.model('Project', ProjectSchema)
