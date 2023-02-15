@@ -4,6 +4,7 @@ import User from '../models/User.js'
 import { verifyToken, tokenUser } from '../authentication/verifyToken.js'
 import escapeRegex from '../util/searchRegex.js'
 import Review from '../models/Review.js'
+import cloudinary from '../util/cloudinary.js'
 
 const router = express.Router()
 
@@ -95,7 +96,6 @@ router
       userState,
       userZipCode,
       userBio,
-      userAvatar,
     } = req.body
 
     const updatedUser = User.findById(
@@ -150,6 +150,30 @@ router
       }
     )
   })
+  // POST add/update user avatar
+  .post('/:userId/avatar', verifyToken, async (req, res, next) => {
+    const userId = req.params
+    const { userAvatar } = req.body
+    const uploadResponse = await cloudinary.uploader.upload(userAvatar, {
+      upload_preset: 'techAppAvatars',
+    })
+    const { url } = uploadResponse
+    const updatedUser = User.findById(
+      { _id: userId },
+      function (err, response) {
+        console.log(updatedUser)
+        // response.userInfo.userAvatar = url
+        // response.save((err, user) => {
+        //   if (err) {
+        //     return next(err)
+        //   } else {
+        //     res.status(200).send(user)
+        //   }
+        // })
+      }
+    )
+  })
+
   // POST add user rating
   .post('/rating', verifyToken, async (req, res, next) => {
     const {
@@ -191,9 +215,38 @@ router
     User.findById({ _id: reviewedUser }, function (err, updatedUser) {})
   })
 
+  // POST update user photos
+  .post('/image', verifyToken, async (req, res, next) => {
+    const { image, imageCaption, userId } = req.body
+    const uploadResponse = await cloudinary.uploader.upload(image, {
+      upload_preset: 'techAppUploads',
+    })
+    const { url, created_at } = uploadResponse
+    User.updateOne(
+      { _id: userId },
+      {
+        $push: {
+          userPhotos: [
+            {
+              imageCaption: imageCaption,
+              imageUrl: url,
+              imageUpDate: created_at,
+            },
+          ],
+        },
+      },
+      function (err, user) {
+        if (err) {
+          res.status(400).send(err)
+        } else {
+          res.status(201).send(user)
+        }
+      }
+    )
+  })
   // PUT update user endorsements
 
-  // PUT update user skills, photos, tech notes, favorites
+  // PUT update user skills, tech notes, favorites
 
   // PUT update user projects
 

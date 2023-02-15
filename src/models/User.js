@@ -30,7 +30,13 @@ const UserSchema = new Schema({
 
   userReviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
   userEndorsements: [{ type: Schema.Types.ObjectId, ref: 'Review' }],
-  userPhotos: [{ type: String }],
+  userPhotos: [
+    {
+      imageUrl: { type: String, required: true },
+      imageCaption: { type: String, required: true },
+      imageUpDate: { type: String },
+    },
+  ],
   userTechNotes: [{ type: String }],
   userFavorites: [{ type: Schema.Types.ObjectId, ref: 'Tech' }],
 })
