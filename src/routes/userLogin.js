@@ -9,9 +9,29 @@ import {
 import { verifyToken } from '../authentication/verifyToken.js'
 
 const router = express.Router()
-
+/**
+ * @swagger
+ * /:
+ *   post:
+ *     summary: log in an existing user
+ *     description: Log in existing user
+ *      responses:
+ *        200:
+ *          description: success
+ *          content:
+ *            application/json:
+ *              schema:
+ *                type: object
+ *                properties:
+ *                  data:
+ *                    type: object
+ *                    items:
+ *                      type: object
+ *
+ *
+ *
+ */
 router
-  //POST Login existing user
   .post('/', async (req, res, next) => {
     const { error } = loginValidation(req.body)
     if (error) return res.status(400).send(error.details[0].message)

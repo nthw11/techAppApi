@@ -1,7 +1,9 @@
 import express from 'express'
 import {} from 'dotenv/config'
+import swaggerJSDoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
+import swaggerDocs from './src/util/swagger.js'
 import connectDB from './src/config/db.js'
-
 import testRoutes from './src/routes/test.js'
 import userRoutes from './src/routes/user.js'
 import techRoutes from './src/routes/tech.js'
@@ -42,5 +44,6 @@ app.use('/api/login/user', userLoginRoutes)
 app.use('/api/login/tech', techLoginRoutes)
 
 export default app.listen(PORT, () => {
+  swaggerDocs(app)
   console.log(`app is listening on port ${PORT}`)
 })

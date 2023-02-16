@@ -1,4 +1,5 @@
 import mongoose, { Schema as _Schema } from 'mongoose'
+import m2s from 'mongoose-to-swagger'
 
 const Schema = _Schema
 
