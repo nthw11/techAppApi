@@ -26,7 +26,14 @@ const TechSchema = new Schema({
   password: { type: String, required: true, minLength: 6 },
   techAvailability: [{ type: String }],
   techSchedule: [{ type: String }],
-  techSkills: [{ type: String }],
+  techSkills: [
+    {
+      skillName: { type: String },
+      skillRateFull: { type: String },
+      skillRateHalf: { type: String },
+      skillNegotiable: { type: Boolean },
+    },
+  ],
   techProjects: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
   techRating: { type: String },
   techReviews: [{ type: Schema.Types.ObjectId, ref: 'Review' }],

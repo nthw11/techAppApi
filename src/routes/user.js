@@ -114,11 +114,15 @@ router
             response.userInfo.userPhone = userPhone
           }
           if (userEmail != '') {
-            const dupEmailCheck = await User.findOne({ userEmail: userEmail })
-            if (dupEmailCheck) {
-              return res.status(400).send('email already exists in database')
-            } else {
+            if (userEmail === response.userEmail) {
               response.userEmail = userEmail
+            } else {
+              const dupEmailCheck = await User.findOne({ userEmail: userEmail })
+              if (dupEmailCheck) {
+                return res.status(400).send('email already exists in database')
+              } else {
+                response.userEmail = userEmail
+              }
             }
           }
           if (userStreetAddress != '') {
@@ -136,14 +140,35 @@ router
           if (userBio != '') {
             response.userInfo.userBio = userBio
           }
-          if (userAvatar != '') {
-            response.userInfo.userAvatar = userAvatar
-          }
+
           response.save((err, user) => {
             if (err) {
               return next(err)
             } else {
-              res.status(200).send(user)
+              const userMinusPassword = {
+                _id: user._id,
+                userUsername: user.userUsername,
+                userFirstName: user.userInfo.userFirstName,
+                userLastName: user.userInfo.userLastName,
+                userPhone: user.userInfo.userPhone,
+                userEmail: user.userEmail,
+                userStreetAddress: user.userInfo.userAddress.streetAddress,
+                userCity: user.userInfo.userAddress.city,
+                userState: user.userInfo.userAddress.state,
+                userZipCode: user.userInfo.userAddress.zip,
+                userAvatar: user.userInfo.userAvatar,
+                userBio: user.userInfo.userBio,
+                userRating: user.userRating,
+                userReviews: user.userReviews,
+                userOrders: user.userOrders,
+                userCompanies: user.userCompanies,
+                userProjects: user.userProjects,
+                userEndorsements: user.userEndorsements,
+                userPhotosUrl: user.userPhotos,
+                userTechNotes: user.userTechNotes,
+                userFavorites: user.userFavorites,
+              }
+              res.status(200).send(userMinusPassword)
             }
           })
         }
@@ -152,7 +177,7 @@ router
   })
   // POST add/update user avatar
   .post('/:userId/avatar', verifyToken, async (req, res, next) => {
-    const userId = req.params
+    const { userId } = req.params
     const { userAvatar } = req.body
     const uploadResponse = await cloudinary.uploader.upload(userAvatar, {
       upload_preset: 'techAppAvatars',
@@ -160,16 +185,19 @@ router
     const { url } = uploadResponse
     const updatedUser = User.findById(
       { _id: userId },
-      function (err, response) {
-        console.log(updatedUser)
-        // response.userInfo.userAvatar = url
-        // response.save((err, user) => {
-        //   if (err) {
-        //     return next(err)
-        //   } else {
-        //     res.status(200).send(user)
-        //   }
-        // })
+      async function (err, response) {
+        if (err) {
+          res.status(400).send(err)
+        } else {
+          response.userInfo.userAvatar = url
+          response.save((err, user) => {
+            if (err) {
+              return next(err)
+            } else {
+              res.status(200).send(user)
+            }
+          })
+        }
       }
     )
   })

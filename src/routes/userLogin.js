@@ -25,6 +25,7 @@ router
         if (!passCheck) {
           res.status(401).send('password is incorrect')
         } else {
+          console.log(user)
           const userMinusPassword = {
             _id: user._id,
             userUsername: user.userUsername,
@@ -32,6 +33,21 @@ router
             userLastName: user.userInfo.userLastName,
             userPhone: user.userInfo.userPhone,
             userEmail: user.userEmail,
+            userStreetAddress: user.userInfo.userAddress.streetAddress,
+            userCity: user.userInfo.userAddress.city,
+            userState: user.userInfo.userAddress.state,
+            userZipCode: user.userInfo.userAddress.zip,
+            userAvatar: user.userInfo.userAvatar,
+            userBio: user.userInfo.userBio,
+            userRating: user.userRating,
+            userReviews: user.userReviews,
+            userOrders: user.userOrders,
+            userCompanies: user.userCompanies,
+            userProjects: user.userProjects,
+            userEndorsements: user.userEndorsements,
+            userPhotosUrl: user.userPhotos,
+            userTechNotes: user.userTechNotes,
+            userFavorites: user.userFavorites,
           }
           const token = issueJWT(user)
           res.json({ user: userMinusPassword, token: token }).status(200)
