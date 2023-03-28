@@ -5,10 +5,10 @@ const ReviewSchema = new Schema({
   reviewer: {
     reviewerName: { type: String },
     reviewerUserId: { type: Schema.Types.ObjectId, ref: 'User' },
-    reviewerTechId: { type: Schema.Types.ObjectId, ref: 'Tech' },
+    reviewerTechId: { type: Schema.Types.ObjectId, ref: 'User' },
   },
-  reviewedTech: { type: Schema.Types.ObjectId, ref: 'Tech' },
-  reviewedUser: { type: Schema.Types.ObjectId, ref: 'Tech' },
+  reviewedTech: { type: Schema.Types.ObjectId, ref: 'User' },
+  reviewedUser: { type: Schema.Types.ObjectId, ref: 'User' },
   rating: { type: String },
   review: { type: String },
 })

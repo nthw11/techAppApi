@@ -3,8 +3,10 @@ import express from 'express'
 const router = express.Router()
 
 router.get('/', (req, res, next) => {
+  const testNumber = Math.floor(Math.random() * 100)
   console.log('test route')
-  res.send('test route is working')
+  console.log(testNumber)
+  res.send(testNumber.toString())
 })
 
 export default router

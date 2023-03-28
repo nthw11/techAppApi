@@ -30,20 +30,20 @@ router
       {
         $project: {
           fullName: {
-            $concat: ['$userInfo.userFirstName', ' ', '$userInfo.userLastName'],
+            $concat: ['$userInfo.firstName', ' ', '$userInfo.lastName'],
           },
-          userPhone: '$userInfo.userPhone',
-          userEmail: '$userEmail',
-          userAvatar: '$userInfo.userAvatar',
-          userRating: '$userRating',
+          phone: '$userInfo.phone',
+          email: '$email',
+          avatar: '$userInfo.avatar',
+          rating: '$rating',
         },
       },
       {
         $match: {
           $or: [
             { fullName: searchName },
-            { userEmail: searchEmail },
-            { userPhone: searchPhone },
+            { email: searchEmail },
+            { phone: searchPhone },
           ],
         },
       },
@@ -87,15 +87,15 @@ router
   .put('/:userId', verifyToken, async (req, res, next) => {
     const userId = req.params.userId
     const {
-      userFirstName,
-      userLastName,
-      userEmail,
-      userPhone,
-      userStreetAddress,
-      userCity,
-      userState,
-      userZipCode,
-      userBio,
+      firstName,
+      lastName,
+      email,
+      phone,
+      streetAddress,
+      city,
+      state,
+      zip,
+      bio,
     } = req.body
 
     const updatedUser = User.findById(
@@ -104,41 +104,96 @@ router
         if (err) {
           res.status(400).send(err)
         } else {
-          if (userFirstName != '') {
-            response.userInfo.userFirstName = userFirstName
+          if (firstName != '') {
+            response.userInfo.firstName = firstName
           }
-          if (userLastName != '') {
-            response.userInfo.userLastName = userLastName
+          if (lastName != '') {
+            response.userInfo.lastName = lastName
           }
-          if (userPhone != '') {
-            response.userInfo.userPhone = userPhone
+          if (phone != '') {
+            response.userInfo.phone = phone
           }
-          if (userEmail != '') {
-            const dupEmailCheck = await User.findOne({ userEmail: userEmail })
-            if (dupEmailCheck) {
-              return res.status(400).send('email already exists in database')
+          if (email != '') {
+            if (email === response.email) {
+              response.email = email
             } else {
-              response.userEmail = userEmail
+              const dupEmailCheck = await User.findOne({ email: email })
+              if (dupEmailCheck) {
+                return res.status(400).send('email already exists in database')
+              } else {
+                response.email = email
+              }
             }
           }
-          if (userStreetAddress != '') {
-            response.userInfo.userAddress.streetAddress = userStreetAddress
+          if (streetAddress != '') {
+            response.userInfo.address.streetAddress = streetAddress
           }
-          if (userCity != '') {
-            response.userInfo.userAddress.city = userCity
+          if (city != '') {
+            response.userInfo.address.city = city
           }
-          if (userState != '') {
-            response.userInfo.userAddress.state = userState
+          if (state != '') {
+            response.userInfo.address.state = state
           }
-          if (userZipCode != '') {
-            response.userInfo.userAddress.zip = userZipCode
+          if (zip != '') {
+            response.userInfo.address.zip = zip
           }
-          if (userBio != '') {
-            response.userInfo.userBio = userBio
+          if (bio != '') {
+            response.userInfo.bio = bio
           }
-          if (userAvatar != '') {
-            response.userInfo.userAvatar = userAvatar
-          }
+
+          response.save((err, user) => {
+            if (err) {
+              return next(err)
+            } else {
+              const userMinusPassword = {
+                _id: user._id,
+                userType: user.userType,
+                username: user.username,
+                firstName: user.userInfo.firstName,
+                lastName: user.userInfo.lastName,
+                phone: user.userInfo.phone,
+                email: user.email,
+                streetAddress: user.userInfo.address.streetAddress,
+                city: user.userInfo.address.city,
+                state: user.userInfo.address.state,
+                zip: user.userInfo.address.zip,
+                avatar: user.userInfo.avatar,
+                bio: user.userInfo.bio,
+                rating: user.rating,
+                reviews: user.reviews,
+                companies: user.companies,
+                projects: user.projects,
+                endorsements: user.endorsements,
+                photos: user.photos,
+                techNotes: user.techNotes,
+                managerNotes: user.managerNotes,
+                favoriteTechs: user.favoriteTechs,
+                availability: user.availability,
+                schedule: user.schedule,
+                skills: user.skills,
+              }
+              res.status(200).send(userMinusPassword)
+            }
+          })
+        }
+      }
+    )
+  })
+  // POST add/update user avatar
+  .post('/:userId/avatar', verifyToken, async (req, res, next) => {
+    const { userId } = req.params
+    const { avatar } = req.body
+    const uploadResponse = await cloudinary.uploader.upload(avatar, {
+      upload_preset: 'techAppAvatars',
+    })
+    const { url } = uploadResponse
+    const updatedUser = User.findById(
+      { _id: userId },
+      async function (err, response) {
+        if (err) {
+          res.status(400).send(err)
+        } else {
+          response.userInfo.avatar = url
           response.save((err, user) => {
             if (err) {
               return next(err)
@@ -150,34 +205,11 @@ router
       }
     )
   })
-  // POST add/update user avatar
-  .post('/:userId/avatar', verifyToken, async (req, res, next) => {
-    const userId = req.params
-    const { userAvatar } = req.body
-    const uploadResponse = await cloudinary.uploader.upload(userAvatar, {
-      upload_preset: 'techAppAvatars',
-    })
-    const { url } = uploadResponse
-    const updatedUser = User.findById(
-      { _id: userId },
-      function (err, response) {
-        console.log(updatedUser)
-        // response.userInfo.userAvatar = url
-        // response.save((err, user) => {
-        //   if (err) {
-        //     return next(err)
-        //   } else {
-        //     res.status(200).send(user)
-        //   }
-        // })
-      }
-    )
-  })
 
   // POST add user rating
   .post('/rating', verifyToken, async (req, res, next) => {
     const {
-      reviewerUserId,
+      reviewerManagerId,
       reviewerTechId,
       reviewerName,
       rating,
@@ -189,7 +221,7 @@ router
       reviewer: {
         reviewerName: reviewerName,
         reviewerTechId: reviewerTechId,
-        reviewerUserId: reviewerUserId,
+        reviewerManagerId: reviewerManagerId,
       },
       reviewedUser: reviewedUser,
       rating: rating,
@@ -199,7 +231,7 @@ router
       } else {
         User.updateOne(
           { _id: reviewedUser },
-          { $push: { userReviews: [review._id] } },
+          { $push: { reviews: [review._id] } },
 
           function (err, user) {
             if (err) {
@@ -231,6 +263,7 @@ router
               imageCaption: imageCaption,
               imageUrl: url,
               imageUpDate: created_at,
+              imageTags: [],
             },
           ],
         },
