@@ -21,7 +21,7 @@ const ProjectSchema = new Schema({
     rooms: [{ type: String }],
   },
   projectDetails: [{ type: String }],
-  projectTechs: [{ type: Schema.Types.ObjectId, ref: 'Tech' }],
+  projectTechs: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   projectBudget: { type: String },
   projectLodgingDetails: [{ type: String }],
   projectDressCode: { type: String },

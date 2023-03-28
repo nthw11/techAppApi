@@ -11,11 +11,12 @@ const loginValidation = (data) => {
 
 const newUserValidation = (data) => {
   const schema = Joi.object({
+    userType: Joi.string().required(),
     username: Joi.string().min(4).max(24).required(),
     email: Joi.string().required().email(),
     password: Joi.string().min(6).required(),
-    firstname: Joi.string().required(),
-    lastname: Joi.string().required(),
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
     phone: Joi.number(),
   })
   console.log(`from loginValidation: ${data}`)
