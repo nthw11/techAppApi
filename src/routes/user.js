@@ -279,8 +279,6 @@ router
   })
   // PUT update user endorsements
 
-  // PUT update user skills, tech notes, favorites
-
   // PUT update user projects
 
   // PUT update user companies

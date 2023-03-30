@@ -5,6 +5,7 @@ import connectDB from './src/config/db.js'
 import testRoutes from './src/routes/test.js'
 import userRoutes from './src/routes/user.js'
 import userLoginRoutes from './src/routes/userLogin.js'
+import userSkillRoutes from './src/routes/userSkills.js'
 
 const app = express()
 const PORT = process.env.PORT || 8000
@@ -36,6 +37,7 @@ app.use(
 
 app.use('/api/test', testRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/user/skills', userSkillRoutes)
 app.use('/api/login/user', userLoginRoutes)
 
 export default app.listen(PORT, () => {
