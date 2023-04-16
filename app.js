@@ -6,6 +6,7 @@ import testRoutes from './src/routes/test.js'
 import userRoutes from './src/routes/user.js'
 import userLoginRoutes from './src/routes/userLogin.js'
 import userSkillRoutes from './src/routes/userSkills.js'
+import projectRoutes from './src/routes/project.js'
 
 const app = express()
 const PORT = process.env.PORT || 8000
@@ -39,6 +40,7 @@ app.use('/api/test', testRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/user/skills', userSkillRoutes)
 app.use('/api/login/user', userLoginRoutes)
+app.use('/api/project', projectRoutes)
 
 export default app.listen(PORT, () => {
   console.log(`app is listening on port ${PORT}`)

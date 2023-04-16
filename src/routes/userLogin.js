@@ -17,46 +17,48 @@ router
     if (error) return res.status(400).send(error.details[0].message)
     const { username, password } = req.body
 
-    await User.findOne({ username: username }).then(async (user) => {
-      if (!user) {
-        res.status(401).send('could not find user')
-      } else {
-        const passCheck = await validatePassword(password, user.password)
-        if (!passCheck) {
-          res.status(401).send('password is incorrect')
+    await User.findOne({ username: username })
+      .populate('projects')
+      .then(async (user) => {
+        if (!user) {
+          res.status(401).send('could not find user')
         } else {
-          const userMinusPassword = {
-            _id: user._id,
-            username: user.username,
-            firstName: user.userInfo.firstName,
-            lastName: user.userInfo.lastName,
-            phone: user.userInfo.phone,
-            email: user.email,
-            userType: user.userType,
-            streetAddress: user.userInfo.address.streetAddress,
-            city: user.userInfo.address.city,
-            state: user.userInfo.address.state,
-            zipCode: user.userInfo.address.zip,
-            avatar: user.userInfo.avatar,
-            bio: user.userInfo.bio,
-            rating: user.rating,
-            reviews: user.reviews,
-            companies: user.companies,
-            projects: user.projects,
-            endorsements: user.endorsements,
-            photos: user.photos,
-            techNotes: user.techNotes,
-            managerNotes: user.managerNotes,
-            favoriteTechs: user.favoriteTechs,
-            availability: user.availability,
-            schedule: user.schedule,
-            skills: user.skills,
+          const passCheck = await validatePassword(password, user.password)
+          if (!passCheck) {
+            res.status(401).send('password is incorrect')
+          } else {
+            const userMinusPassword = {
+              _id: user._id,
+              username: user.username,
+              firstName: user.userInfo.firstName,
+              lastName: user.userInfo.lastName,
+              phone: user.userInfo.phone,
+              email: user.email,
+              userType: user.userType,
+              streetAddress: user.userInfo.address.streetAddress,
+              city: user.userInfo.address.city,
+              state: user.userInfo.address.state,
+              zipCode: user.userInfo.address.zip,
+              avatar: user.userInfo.avatar,
+              bio: user.userInfo.bio,
+              rating: user.rating,
+              reviews: user.reviews,
+              companies: user.companies,
+              projects: user.projects,
+              endorsements: user.endorsements,
+              photos: user.photos,
+              techNotes: user.techNotes,
+              managerNotes: user.managerNotes,
+              favoriteTechs: user.favoriteTechs,
+              availability: user.availability,
+              schedule: user.schedule,
+              skills: user.skills,
+            }
+            const token = issueJWT(user)
+            res.json({ user: userMinusPassword, token: token }).status(200)
           }
-          const token = issueJWT(user)
-          res.json({ user: userMinusPassword, token: token }).status(200)
         }
-      }
-    })
+      })
   })
 
   //POST Register new user
